@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Mac OS X Leopard (HTML copy)</title>
+<style>
+  html,body{
+    margin:0;padding:0;height:100%;overflow:hidden;
+    font-family:"Lucida Grande","Segoe UI",Tahoma,sans-serif;
+    background: radial-gradient(circle at 50% 30%, #6fb7e6 0%, #2f77b0 55%, #14497e 100%);
+    cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M4 2 L4 19 L8.5 15.2 L11.2 21.5 L14 20.2 L11.3 14 L17 14 Z" fill="black" stroke="white" stroke-width="1.4" stroke-linejoin="round"/></svg>') 4 2, default;
+  }
+
+  /* ---------- Верхнее меню ---------- */
+  #menubar{
+    position:fixed;top:0;left:0;right:0;height:22px;
+    background:linear-gradient(to bottom,#eeeeee,#c9c9c9);
+    border-bottom:1px solid #888;
+    font-size:13px;color:#222;
+    display:flex;align-items:center;
+    padding:0 10px;
+    box-shadow:0 1px 2px rgba(0,0,0,.3);
+    z-index:1000;
+  }
+  #menubar .apple{
+    font-weight:bold;margin-right:16px;
+    display:inline-flex;align-items:center;justify-content:center;
+    width:22px;
+  }
+  #menubar span{margin-right:16px;white-space:nowrap;}
+  #clock{}
+
+  /* ---------- Выпадающие меню ---------- */
+  .menu-item{position:relative;cursor:pointer;padding:2px 4px;border-radius:3px;}
+  .menu-item:hover{background:rgba(0,0,0,.06);}
+  .menu-item.open{background:#3f7fd0;color:#fff;}
+  .dropdown{
+    display:none;position:absolute;top:22px;left:0;
+    min-width:190px;background:#fafafa;
+    border:1px solid #999;border-radius:0 0 6px 6px;
+    box-shadow:0 6px 16px rgba(0,0,0,.35);
+    padding:4px 0;z-index:2000;
+    font-size:12px;color:#222;
+  }
+  .menu-item.open .dropdown{display:block;}
+  .dropdown .d-item{padding:5px 16px;white-space:nowrap;cursor:pointer;}
+  .dropdown .d-item:hover{background:#3f7fd0;color:#fff;}
+  .dropdown .d-sep{height:1px;background:#ddd;margin:4px 0;}
+  .dropdown .d-item.disabled{color:#aaa;cursor:default;}
+  .dropdown .d-item.disabled:hover{background:none;color:#aaa;}
+
+  /* ---------- Мини-календарь ---------- */
+  .cal-header{text-align:center;font-weight:bold;font-size:12px;margin-bottom:8px;color:#333;}
+  .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);font-size:10px;color:#888;text-align:center;margin-bottom:4px;}
+  .cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:11px;text-align:center;color:#333;}
+  .cal-days .cal-day{padding:4px 0;border-radius:4px;cursor:default;}
+  .cal-days .cal-day.other-month{color:#ccc;}
+  .cal-days .cal-day.today{background:#ff3b30;color:#fff;font-weight:bold;}
+
+  /* ---------- Spotlight ---------- */
+  .spotlight-btn{margin-left:auto;margin-right:8px;padding:2px 6px;border-radius:3px;cursor:pointer;display:flex;align-items:center;}
+  .spotlight-btn:hover{background:rgba(0,0,0,.06);}
+  #spotlight-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:5000;justify-content:center;padding-top:90px;}
+  #spotlight-overlay.active{display:flex;}
+  .spotlight-box{width:520px;max-width:90%;background:rgba(246,246,246,.97);border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden;height:fit-content;}
+  .spotlight-input-row{display:flex;align-items:center;gap:10px;padding:12px 16px;}
+  .spotlight-input-row svg{flex-shrink:0;}
+  #spotlight-input{flex:1;border:none;outline:none;background:transparent;font-size:22px;color:#222;font-weight:300;}
+  .spotlight-results{border-top:1px solid #ddd;max-height:260px;overflow-y:auto;}
+  .spotlight-result{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;font-size:13px;color:#222;cursor:pointer;}
+  .spotlight-result:hover, .spotlight-result.highlighted{background:#3f7fd0;color:#fff;}
+  .spotlight-result .sr-label{color:#888;font-size:11px;}
+  .spotlight-result:hover .sr-label, .spotlight-result.highlighted .sr-label{color:#dce8ff;}
+  .spotlight-answer{font-size:20px;font-weight:600;}
+
+  /* ---------- Setup Wizard ---------- */
+  #wizard-overlay{display:none;position:fixed;inset:0;background:rgba(20,30,50,.55);z-index:6000;align-items:center;justify-content:center;}
+  #wizard-overlay.active{display:flex;}
+  .wizard-box{width:460px;max-width:90%;background:#f4f4f4;border-radius:12px;box-shadow:0 25px 70px rgba(0,0,0,.5);overflow:hidden;text-align:center;}
+  .wizard-titlebar{height:22px;background:linear-gradient(to bottom,#e6e6e6,#c8c8c8);border-bottom:1px solid #aaa;}
+  .wizard-step{display:none;padding:34px 30px 24px;}
+  .wizard-step.active{display:block;}
+  .wizard-step h2{margin:0 0 10px;font-size:19px;color:#222;}
+  .wizard-step p{margin:0 0 18px;font-size:13px;color:#666;line-height:1.5;}
+  .wizard-icon{font-size:44px;margin-bottom:6px;}
+  .wizard-input{width:80%;padding:9px 12px;font-size:14px;border:1px solid #bbb;border-radius:6px;text-align:center;outline:none;margin-bottom:6px;}
+  .wizard-input:focus{border-color:#3f7fd0;}
+  .wizard-wallpaper-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:6px 0 4px;}
+  .wizard-wallpaper-grid .wallpaper-swatch{width:74px;height:46px;border-radius:4px;cursor:pointer;border:2px solid transparent;}
+  .wizard-wallpaper-grid .wallpaper-swatch.selected{border-color:#3f7fd0;}
+  .wizard-nav{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-top:1px solid #ddd;background:#eaeaea;}
+  .wizard-dots{display:flex;gap:6px;}
+  .wizard-dot{width:6px;height:6px;border-radius:50%;background:#ccc;}
+  .wizard-dot.active{background:#3f7fd0;}
+  .wizard-btn{padding:6px 18px;font-size:12px;border-radius:5px;border:1px solid #999;cursor:pointer;background:linear-gradient(to bottom,#fdfdfd,#dcdcdc);color:#333;}
+  .wizard-btn:hover{background:linear-gradient(to bottom,#fff,#e8e8e8);}
+  .wizard-btn.primary{background:linear-gradient(to bottom,#5aa0f0,#2f77d0);color:#fff;border-color:#2660ad;}
+  .wizard-btn.primary:hover{background:linear-gradient(to bottom,#6cb0ff,#3f87e0);}
+  .wizard-btn:disabled{opacity:.5;cursor:default;}
+
+  /* ---------- Окна ---------- */
+  .window{position:absolute;top:80px;left:120px;width:420px;background:#ececec;border:1px solid #666;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.5);overflow:hidden;}
+  .titlebar{height:24px;background:linear-gradient(to bottom,#d9d9d9,#b4b4b4);border-bottom:1px solid #999;display:flex;align-items:center;padding:0 8px;cursor:move;user-select:none;}
+  .traffic{width:12px;height:12px;border-radius:50%;margin-right:6px;box-shadow:inset 0 0 1px rgba(0,0,0,.5);cursor:pointer;}
+  .red{background:#ff5f57;border:1px solid #e0443e;}
+  .yellow{background:#ffbd2e;border:1px solid #dea123;}
+  .green{background:#28c840;border:1px solid #1aab29;}
+  .window{transition:transform .25s ease, opacity .25s ease;}
+  .window.minimized{transform:translate(-420px,600px) scale(.1);opacity:0;pointer-events:none;}
+  .window.closed{display:none;}
+  .titletext{flex:1;text-align:center;font-size:12px;color:#333;margin-right:40px;}
+  .content{padding:18px;font-size:13px;color:#222;text-align:center;}
+  .content h2{margin:6px 0 2px;font-size:16px;}
+  .content p{margin:2px 0;color:#555;}
+
+  /* ---------- Системные настройки ---------- */
+  .pref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+  .pref-item{display:flex;flex-direction:column;align-items:center;font-size:11px;color:#333;gap:4px;cursor:pointer;}
+  .pref-item:hover{opacity:.8;}
+  .pref-icon{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,0.4);background:linear-gradient(to bottom, #ffffff, #e0e0e0);}
+  .pref-icon svg{width:24px;height:24px;}
+  .pref-toggle-row{display:flex;align-items:center;gap:10px;font-size:12px;color:#333;padding:6px 0;border-top:1px solid #d8d8d8;}
+  .switch{position:relative;display:inline-block;width:34px;height:18px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;}
+  .switch .slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:18px;transition:.2s;}
+  .switch .slider:before{content:"";position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:white;border-radius:50%;transition:.2s;}
+  .switch input:checked + .slider{background:#4cd964;}
+  .switch input:checked + .slider:before{transform:translateX(16px);}
+
+  .settings-page{display:none;}
+  .settings-page.active{display:block;}
+  #settings-main.active{display:block;}
+  .settings-page-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .settings-page-header h3{margin:0;font-size:14px;color:#333;}
+  .back-arrow{width:26px;height:26px;border-radius:50%;background:linear-gradient(to bottom,#f5f5f5,#dcdcdc);border:1px solid #999;display:flex;align-items:center;justify-content:center;font-size:14px;color:#333;cursor:pointer;flex-shrink:0;}
+  .back-arrow:hover{background:linear-gradient(to bottom,#fff,#e6e6e6);}
+  .wallpaper-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+  .wallpaper-swatch{width:80px;height:50px;border-radius:6px;border:2px solid transparent;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.4);background-size:cover;background-position:center;}
+  .wallpaper-swatch:hover{border-color:#999;}
+  .wallpaper-swatch.selected{border-color:#2a7fd0;}
+  .upload-btn{display:inline-block;padding:6px 14px;font-size:12px;background:linear-gradient(to bottom,#f5f5f5,#dcdcdc);border:1px solid #999;border-radius:5px;cursor:pointer;color:#222;}
+  .upload-btn:hover{background:linear-gradient(to bottom,#fff,#e6e6e6);}
+
+  /* ---------- Док (Скевоморфизм Leopard) ---------- */
+  #dock-wrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;pointer-events:none;z-index:900;}
+  #dock{pointer-events:auto;display:flex;align-items:flex-end;gap:6px;padding:6px 10px 4px;margin-bottom:6px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:16px;backdrop-filter:blur(4px);box-shadow:0 0 0 1px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.2);}
+  
+  .icon{
+    width:56px;height:56px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:transform .2s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter .2s;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+    background: transparent; overflow: hidden; position: relative;
+  }
+  .icon svg{width:100%;height:100%;display:block;}
+  .icon:hover{transform:translateY(-12px) scale(1.2);filter: drop-shadow(0 12px 16px rgba(0,0,0,0.5));}
+
+  #hint{position:fixed;left:10px;bottom:8px;color:#eee;font-size:11px;text-shadow:0 1px 2px rgba(0,0,0,.6);}
+
+  /* ---------- Safari ---------- */
+  .browser-bar{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#dcdcdc;border-bottom:1px solid #aaa;}
+  .browser-nav{width:20px;height:20px;border-radius:50%;background:linear-gradient(to bottom,#f5f5f5,#ccc);border:1px solid #999;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555;cursor:pointer;flex-shrink:0;}
+  .browser-url{flex:1;height:20px;border-radius:10px;background:#fff;border:1px solid #aaa;font-size:12px;color:#555;display:flex;align-items:center;padding:0 10px;}
+  .browser-page{padding:24px;text-align:center;background:#fff;min-height:220px;}
+  .browser-page h2{color:#333;margin-bottom:6px;}
+  .browser-page p{color:#777;font-size:12px;}
+
+  /* ---------- Mail ---------- */
+  .mail-layout{display:flex;height:260px;}
+  .mail-list{width:150px;border-right:1px solid #ccc;background:#f3f3f3;overflow-y:auto;}
+  .mail-item{padding:8px 10px;border-bottom:1px solid #e2e2e2;font-size:11px;cursor:pointer;}
+  .mail-item b{display:block;font-size:12px;color:#222;}
+  .mail-item span{color:#888;}
+  .mail-item:hover{background:#e6f0ff;}
+  .mail-preview{flex:1;padding:14px;font-size:12px;color:#333;text-align:left;overflow-y:auto;}
+  .mail-preview h4{margin:0 0 4px;}
+  .mail-preview .meta{color:#888;font-size:11px;margin-bottom:10px;}
+
+  /* ---------- iTunes ---------- */
+  .itunes-layout{display:flex;height:240px;text-align:left;}
+  .itunes-sidebar{width:130px;border-right:1px solid #ccc;background:#f3f3f3;padding:8px 0;font-size:12px;}
+  .itunes-sidebar div{padding:6px 12px;cursor:pointer;color:#333;}
+  .itunes-sidebar div:hover{background:#dcebff;}
+  .track-list{flex:1;overflow-y:auto;}
+  .track-row{display:flex;justify-content:space-between;padding:6px 12px;font-size:12px;color:#333;border-bottom:1px solid #eee;cursor:pointer;}
+  .track-row:hover{background:#eef5ff;}
+  .track-row span.dur{color:#999;}
+  .itunes-player{padding:8px 12px;background:#e4e4e4;border-top:1px solid #ccc;font-size:11px;color:#555;text-align:center;}
+
+  /* ---------- Корзина ---------- */
+  .trash-empty{padding:30px 10px;text-align:center;color:#888;font-size:13px;}
+  .trash-empty .big-icon{display:block;margin:0 auto 10px;width:72px;height:72px;filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));}
+
+  /* ---------- Калькулятор ---------- */
+  .calc-body{background:#1c1c1e;padding:12px;}
+  .calc-display{
+    color:#fff;font-size:34px;text-align:right;padding:10px 8px;min-height:40px;
+    font-family:"Segoe UI",sans-serif;font-weight:300;overflow:hidden;white-space:nowrap;
+    background:#2a2a2c;border-radius:4px;margin-bottom:8px;
+    box-shadow:inset 0 2px 4px rgba(0,0,0,0.5);
+  }
+  .calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .calc-btn{
+    border:none;border-radius:50%;height:44px;font-size:16px;color:#fff;
+    background:#4a4a4c;cursor:pointer;
+    box-shadow:0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+    transition: filter 0.1s, transform 0.1s;
+  }
+  .calc-btn:active{filter:brightness(1.4); transform:scale(0.95);}
+  .calc-btn.calc-fn{background:#a5a5a5;color:#1c1c1e;}
+  .calc-btn.calc-op{background:#ff9f0a;}
+  .calc-btn.calc-zero{grid-column:span 2;border-radius:22px;text-align:left;padding-left:18px;}
+
+  /* ---------- TextEdit ---------- */
+  .textedit-toolbar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:#e8e8e8;border-bottom:1px solid #bbb;}
+  .te-btn{padding:4px 10px;font-size:12px;color:#333;background:linear-gradient(to bottom,#fdfdfd,#dcdcdc);border:1px solid #999;border-radius:4px;cursor:pointer;}
+  .te-btn:hover{background:linear-gradient(to bottom,#fff,#e8e8e8);}
+  .te-btn.active{background:#3f7fd0;color:#fff;border-color:#2a5fa0;}
+  .te-sep{width:1px;height:18px;background:#ccc;margin:0 4px;}
+  .textedit-area{min-height:220px;max-height:340px;overflow-y:auto;padding:14px;font-size:13px;color:#222;background:#fff;text-align:left;line-height:1.5;}
+  .textedit-area:focus{outline:none;}
+</style>
+</head>
+<body>
+
+  <div id="menubar">
+    <div class="menu-item" id="menu-apple">
+      <span class="apple">
+        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#222" d="M17.3 8.6c-1.4-.1-2.6.8-3.3.8-.7 0-1.7-.8-2.9-.7-1.5 0-2.9.9-3.6 2.2-1.6 2.7-.4 6.7 1.1 8.9.7 1.1 1.6 2.3 2.8 2.2 1.1 0 1.5-.7 2.9-.7s1.7.7 2.9.7c1.2 0 2-1.1 2.7-2.2.9-1.2 1.2-2.4 1.2-2.5 0 0-2.3-.9-2.3-3.5 0-2.2 1.8-3.2 1.9-3.3-1-1.5-2.6-1.7-3.1-1.7-.1 0-.2 0-.3 0z"/>
+          <path fill="#222" d="M14.4 7.1c.6-.7 1-1.7.9-2.7-.9.1-2 .6-2.6 1.3-.5.6-1 1.6-.9 2.5 1 .1 2-.4 2.6-1.1z"/>
+        </svg>
+      </span>
+      <div class="dropdown">
+        <div class="d-item" data-action="open-about">Об этом Mac</div>
+        <div class="d-sep"></div>
+        <div class="d-item" data-action="open-settings">Системные настройки…</div>
+        <div class="d-sep"></div>
+        <div class="d-item" data-action="open-wizard">Ассистент настройки…</div>
+        <div class="d-sep"></div>
+        <div class="d-item" data-action="empty-trash">Очистить корзину…</div>
+        <div class="d-sep"></div>
+        <div class="d-item disabled">Спящий режим</div>
+        <div class="d-item" data-action="restart">Перезагрузить…</div>
+        <div class="d-item" data-action="shutdown">Выключить…</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-finder"><b>Finder</b>
+      <div class="dropdown">
+        <div class="d-item" data-action="open-about">О программе Finder</div>
+        <div class="d-sep"></div>
+        <div class="d-item disabled">Настройки Finder…</div>
+        <div class="d-sep"></div>
+        <div class="d-item disabled">Скрыть Finder</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-file">Файл
+      <div class="dropdown">
+        <div class="d-item" data-action="open-about">Новое окно Finder</div>
+        <div class="d-item disabled">Новая папка</div>
+        <div class="d-sep"></div>
+        <div class="d-item" data-action="close-active">Закрыть окно</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-edit">Правка
+      <div class="dropdown">
+        <div class="d-item disabled">Отменить</div>
+        <div class="d-item disabled">Повторить</div>
+        <div class="d-sep"></div>
+        <div class="d-item disabled">Вырезать</div>
+        <div class="d-item disabled">Копировать</div>
+        <div class="d-item disabled">Вставить</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-view">Вид
+      <div class="dropdown">
+        <div class="d-item" data-action="wallpaper-blue">Синие обои</div>
+        <div class="d-item" data-action="wallpaper-purple">Фиолетовые обои</div>
+        <div class="d-sep"></div>
+        <div class="d-item" data-action="open-settings">Настроить рабочий стол…</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-goto">Переход
+      <div class="dropdown">
+        <div class="d-item" data-action="open-about">Домой</div>
+        <div class="d-item" data-action="open-trash">Корзина</div>
+        <div class="d-item" data-action="open-settings">Программы</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-window">Окно
+      <div class="dropdown">
+        <div class="d-item" data-action="minimize-active">Свернуть</div>
+        <div class="d-item" data-action="zoom-active">Развернуть</div>
+        <div class="d-sep"></div>
+        <div class="d-item" data-action="close-active">Закрыть окно</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-help">Справка
+      <div class="dropdown">
+        <div class="d-item" data-action="open-about">Mac Help</div>
+      </div>
+    </div>
+    <div class="spotlight-btn" id="menu-spotlight">
+      <svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10" cy="10" r="6.5" fill="none" stroke="#222" stroke-width="2"/>
+        <line x1="15" y1="15" x2="20.5" y2="20.5" stroke="#222" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="menu-item" id="menu-clock">
+      <span id="clock"></span>
+      <div class="dropdown" id="calendar-dropdown" style="left:auto;right:0;min-width:210px;padding:10px;">
+        <div class="cal-header"><span id="cal-month-label"></span></div>
+        <div class="cal-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+        <div class="cal-days" id="cal-days"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="win">
+    <div class="titlebar" id="titlebar">
+      <div class="traffic red" id="btn-close" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom" title="Развернуть"></div>
+      <div class="titletext">Об этом Mac</div>
+    </div>
+    <div class="content">
+      <h2>Mac OS X</h2>
+      <p style="font-size:22px;font-weight:bold;color:#333;">Leopard</p>
+      <p>Версия 10.5</p>
+      <p style="margin-top:10px;" id="about-username"></p>
+      <p>HTML-имитация</p>
+    </div>
+  </div>
+
+  <div class="window" id="win-settings" style="top:120px;left:260px;width:460px;display:none;">
+    <div class="titlebar" id="titlebar-settings">
+      <div class="traffic red" id="btn-close-settings" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min-settings" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom-settings" title="Развернуть"></div>
+      <div class="titletext">Системные настройки</div>
+    </div>
+    <div class="content" style="text-align:left;">
+      <div class="settings-page active" id="settings-main">
+      <div class="pref-grid">
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 6 1 10c4 5 7 8 11 11 4-3 7-6 11-11-2-4-6-7-11-7z" fill="#3498db"/></svg>
+          </div><span>Wi-Fi</span>
+        </div>
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" fill="#e74c3c"/></svg>
+          </div><span>Звук</span>
+        </div>
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" fill="#95a5a6"/><path d="M8 21h8M12 17v4" stroke="#7f8c8d" stroke-width="2" fill="none"/></svg>
+          </div><span>Экран</span>
+        </div>
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C7 2 3 6 3 11c0 3 2 6 5 8v3h8v-3c3-2 5-5 5-8 0-5-4-9-9-9z" fill="#f39c12"/></svg>
+          </div><span>Мышь</span>
+        </div>
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#2ecc71"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" stroke="#fff" stroke-width="1.5" fill="none"/></svg>
+          </div><span>Сеть</span>
+        </div>
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" fill="#e74c3c"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="#e74c3c" stroke-width="2" fill="none"/></svg>
+          </div><span>Защита</span>
+        </div>
+        <div class="pref-item" id="pref-tile-desktop">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="#9b59b6"/><circle cx="8" cy="8" r="2" fill="#fff" opacity="0.7"/><path d="M3 15l5-5 4 4 4-4 5 5" stroke="#fff" stroke-width="2" fill="none"/></svg>
+          </div><span>Рабочий стол</span>
+        </div>
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" fill="#f1c40f"/><path d="M16 7V5a4 4 0 0 0-8 0v2" stroke="#f1c40f" stroke-width="2" fill="none"/></svg>
+          </div><span>Энергия</span>
+        </div>
+        <div class="pref-item">
+          <div class="pref-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="#3498db"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7" fill="#3498db"/></svg>
+          </div><span>Пользователи</span>
+        </div>
+      </div>
+      <div class="pref-toggle-row">
+        <label class="switch"><input type="checkbox" id="wifi-toggle" checked><span class="slider"></span></label><span>Wi-Fi включён</span>
+      </div>
+      <div class="pref-toggle-row">
+        <label class="switch"><input type="checkbox" id="sound-toggle" checked><span class="slider"></span></label><span>Звуковые эффекты</span>
+      </div>
+      <div class="pref-toggle-row">
+        <span style="width:110px;">Громкость</span>
+        <input type="range" min="0" max="100" value="60" style="flex:1;">
+      </div>
+      </div>
+      <div class="settings-page" id="panel-desktop">
+        <div class="settings-page-header">
+          <div class="back-arrow" id="back-to-settings" title="Назад к настройкам">←</div>
+          <h3>Рабочий стол</h3>
+        </div>
+        <div class="wallpaper-grid" id="wallpaper-grid">
+          <div class="wallpaper-swatch selected" data-bg="radial-gradient(circle at 50% 30%, #6fb7e6 0%, #2f77b0 55%, #14497e 100%)" style="background:radial-gradient(circle at 50% 30%, #6fb7e6 0%, #2f77b0 55%, #14497e 100%);" title="Голубой (по умолчанию)"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #3a6bd6 0%, #1c3f8f 55%, #0b1f4e 100%)" style="background:radial-gradient(circle at 50% 30%, #3a6bd6 0%, #1c3f8f 55%, #0b1f4e 100%);" title="Тёмно-синий"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #b98fe6 0%, #6a3fae 55%, #341e63 100%)" style="background:radial-gradient(circle at 50% 30%, #b98fe6 0%, #6a3fae 55%, #341e63 100%);" title="Фиолетовый"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #d6a0e6 0%, #8e4fae 55%, #4a2263 100%)" style="background:radial-gradient(circle at 50% 30%, #d6a0e6 0%, #8e4fae 55%, #4a2263 100%);" title="Сиреневый"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #8ee6c6 0%, #2f9e7a 55%, #14503e 100%)" style="background:radial-gradient(circle at 50% 30%, #8ee6c6 0%, #2f9e7a 55%, #14503e 100%);" title="Мятный"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #e6c98e 0%, #ae7a2f 55%, #5a3d14 100%)" style="background:radial-gradient(circle at 50% 30%, #e6c98e 0%, #ae7a2f 55%, #5a3d14 100%);" title="Тёплый песочный"></div>
+        </div>
+        <label class="upload-btn" for="wallpaper-upload">Загрузить свою картинку…</label>
+        <input type="file" id="wallpaper-upload" accept="image/*" style="display:none;">
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="win-safari" style="top:70px;left:200px;width:520px;display:none;">
+    <div class="titlebar" id="titlebar-safari">
+      <div class="traffic red" id="btn-close-safari" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min-safari" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom-safari" title="Развернуть"></div>
+      <div class="titletext">Safari</div>
+    </div>
+    <div class="browser-bar">
+      <div class="browser-nav">←</div><div class="browser-nav">→</div>
+      <div class="browser-url">🔒 start.leopard.local</div>
+    </div>
+    <div class="browser-page">
+      <h2>Добро пожаловать в Safari</h2>
+      <p>Это демонстрационная страница — реального выхода в интернет здесь нет.</p>
+    </div>
+  </div>
+
+  <div class="window" id="win-mail" style="top:100px;left:180px;width:480px;display:none;">
+    <div class="titlebar" id="titlebar-mail">
+      <div class="traffic red" id="btn-close-mail" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min-mail" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom-mail" title="Развернуть"></div>
+      <div class="titletext">Mail</div>
+    </div>
+    <div class="mail-layout">
+      <div class="mail-list">
+        <div class="mail-item"><b>Apple</b><span>Добро пожаловать в Leopard</span></div>
+        <div class="mail-item"><b>iTunes Store</b><span>Новинки этой недели</span></div>
+        <div class="mail-item"><b>.Mac</b><span>Ваша учётная запись готова</span></div>
+        <div class="mail-item"><b>Системное сообщение</b><span>Обновление доступно</span></div>
+      </div>
+      <div class="mail-preview">
+        <h4>Добро пожаловать в Leopard</h4>
+        <div class="meta">От: Apple · Сегодня</div>
+        <p>Это демонстрационное письмо в имитации Mail. Никакой реальной почты здесь не отправляется и не принимается.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="win-itunes" style="top:130px;left:220px;width:480px;display:none;">
+    <div class="titlebar" id="titlebar-itunes">
+      <div class="traffic red" id="btn-close-itunes" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min-itunes" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom-itunes" title="Развернуть"></div>
+      <div class="titletext">iTunes</div>
+    </div>
+    <div class="itunes-layout">
+      <div class="itunes-sidebar">
+        <div>🎵 Музыка</div><div>🎬 Фильмы</div><div>📻 Радио</div><div>🛒 iTunes Store</div>
+      </div>
+      <div class="track-list">
+        <div class="track-row"><span>1. Leopard Theme</span><span class="dur">2:14</span></div>
+        <div class="track-row"><span>2. Aqua Dreams</span><span class="dur">3:47</span></div>
+        <div class="track-row"><span>3. Dock Bounce</span><span class="dur">1:58</span></div>
+        <div class="track-row"><span>4. Finder Waltz</span><span class="dur">4:02</span></div>
+      </div>
+    </div>
+    <div class="itunes-player">⏮ ⏯ ⏭ &nbsp;—&nbsp; Ничего не воспроизводится</div>
+  </div>
+
+  <div class="window" id="win-calc" style="top:110px;left:340px;width:220px;display:none;">
+    <div class="titlebar" id="titlebar-calc">
+      <div class="traffic red" id="btn-close-calc" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min-calc" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom-calc" title="Развернуть"></div>
+      <div class="titletext">Калькулятор</div>
+    </div>
+    <div class="calc-body">
+      <div class="calc-display" id="calc-display">0</div>
+      <div class="calc-grid">
+        <button class="calc-btn calc-fn" data-op="clear">C</button>
+        <button class="calc-btn calc-fn" data-op="negate">±</button>
+        <button class="calc-btn calc-fn" data-op="percent">%</button>
+        <button class="calc-btn calc-op" data-op="divide">÷</button>
+        <button class="calc-btn" data-num="7">7</button>
+        <button class="calc-btn" data-num="8">8</button>
+        <button class="calc-btn" data-num="9">9</button>
+        <button class="calc-btn calc-op" data-op="multiply">×</button>
+        <button class="calc-btn" data-num="4">4</button>
+        <button class="calc-btn" data-num="5">5</button>
+        <button class="calc-btn" data-num="6">6</button>
+        <button class="calc-btn calc-op" data-op="subtract">−</button>
+        <button class="calc-btn" data-num="1">1</button>
+        <button class="calc-btn" data-num="2">2</button>
+        <button class="calc-btn" data-num="3">3</button>
+        <button class="calc-btn calc-op" data-op="add">+</button>
+        <button class="calc-btn calc-zero" data-num="0">0</button>
+        <button class="calc-btn" data-op="decimal">,</button>
+        <button class="calc-btn calc-op calc-equal" data-op="equals">=</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="window" id="win-textedit" style="top:90px;left:280px;width:460px;display:none;">
+    <div class="titlebar" id="titlebar-textedit">
+      <div class="traffic red" id="btn-close-textedit" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min-textedit" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom-textedit" title="Развернуть"></div>
+      <div class="titletext">Без имени — TextEdit</div>
+    </div>
+    <div class="textedit-toolbar">
+      <button class="te-btn" id="te-bold" title="Жирный"><b>Ж</b></button>
+      <button class="te-btn" id="te-italic" title="Курсив"><i>К</i></button>
+      <button class="te-btn" id="te-underline" title="Подчёркнутый"><u>Ч</u></button>
+      <span class="te-sep"></span>
+      <button class="te-btn" id="te-clear" title="Очистить">Очистить</button>
+    </div>
+    <div class="textedit-area" id="textedit-area" contenteditable="true">Начните печатать здесь…</div>
+  </div>
+
+  <div class="window" id="win-trash" style="top:160px;left:300px;width:340px;display:none;">
+    <div class="titlebar" id="titlebar-trash">
+      <div class="traffic red" id="btn-close-trash" title="Закрыть"></div>
+      <div class="traffic yellow" id="btn-min-trash" title="Свернуть"></div>
+      <div class="traffic green" id="btn-zoom-trash" title="Развернуть"></div>
+      <div class="titletext">Корзина</div>
+    </div>
+    <div class="trash-empty">
+      <svg class="big-icon" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="trash-g" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#bdc3c7"/>
+            <stop offset="20%" stop-color="#ecf0f1"/>
+            <stop offset="50%" stop-color="#bdc3c7"/>
+            <stop offset="80%" stop-color="#95a5a6"/>
+            <stop offset="100%" stop-color="#7f8c8d"/>
+          </linearGradient>
+        </defs>
+        <path d="M22 30 L30 92 L70 92 L78 30 Z" fill="url(#trash-g)" stroke="#7f8c8d" stroke-width="1.5"/>
+        <rect x="14" y="20" width="72" height="10" rx="2" fill="url(#trash-g)" stroke="#7f8c8d" stroke-width="1.5"/>
+        <rect x="40" y="12" width="20" height="8" rx="2" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1.5"/>
+        <line x1="36" y1="40" x2="34" y2="84" stroke="#7f8c8d" stroke-width="1.5" opacity="0.6"/>
+        <line x1="50" y1="40" x2="50" y2="84" stroke="#7f8c8d" stroke-width="1.5" opacity="0.6"/>
+        <line x1="64" y1="40" x2="66" y2="84" stroke="#7f8c8d" stroke-width="1.5" opacity="0.6"/>
+        <rect x="22" y="30" width="56" height="62" fill="url(#trash-g)" opacity="0.3"/>
+      </svg>
+      Корзина пуста
+    </div>
+  </div>
+
+  <div id="dock-wrap">
+    <div id="dock">
+      <div class="icon" id="dock-finder" title="Об этом Mac">
+        <svg viewBox="0 0 128 128">
+          <defs>
+            <linearGradient id="f-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7dd3ff"/><stop offset="100%" stop-color="#0078d7"/></linearGradient>
+            <linearGradient id="f-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/><stop offset="45%" stop-color="#ffffff" stop-opacity="0.2"/><stop offset="50%" stop-color="#ffffff" stop-opacity="0.0"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0.0"/></linearGradient>
+          </defs>
+          <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#f-bg)"/>
+          <rect x="4" y="4" width="120" height="64" rx="26" fill="url(#f-gloss)"/>
+          <path d="M38 58 Q44 48 54 58" stroke="#004a8f" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M74 58 Q84 48 90 58" stroke="#004a8f" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M42 82 Q64 102 86 82" stroke="#004a8f" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M44 84 Q64 100 84 84" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="icon" id="dock-safari" title="Safari">
+        <svg viewBox="0 0 128 128">
+          <defs>
+            <radialGradient id="s-bg"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#c8e0ff"/></radialGradient>
+            <linearGradient id="s-needle-r" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff5f57"/><stop offset="100%" stop-color="#c0392b"/></linearGradient>
+          </defs>
+          <circle cx="64" cy="64" r="60" fill="url(#s-bg)" stroke="#a0a0a0" stroke-width="2"/>
+          <circle cx="64" cy="64" r="54" fill="none" stroke="#4a90d9" stroke-width="3"/>
+          <polygon points="64,16 72,64 64,112 56,64" fill="url(#s-needle-r)"/>
+          <polygon points="64,16 72,64 64,64" fill="#a93226"/>
+          <polygon points="64,112 56,64 64,64" fill="#ffffff"/>
+          <circle cx="64" cy="64" r="6" fill="#2c3e50"/>
+          <circle cx="64" cy="64" r="3" fill="#95a5a6"/>
+        </svg>
+      </div>
+      <div class="icon" id="dock-mail" title="Mail">
+        <svg viewBox="0 0 128 128">
+          <defs>
+            <linearGradient id="m-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7ec8ff"/><stop offset="100%" stop-color="#2980b9"/></linearGradient>
+            <linearGradient id="m-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0.0"/></linearGradient>
+          </defs>
+          <rect x="8" y="32" width="112" height="72" rx="10" fill="url(#m-bg)"/>
+          <path d="M8 40 L64 82 L120 40" stroke="#ffffff" stroke-width="4" fill="none" stroke-linejoin="round"/>
+          <rect x="8" y="32" width="112" height="36" rx="10" fill="url(#m-gloss)"/>
+        </svg>
+      </div>
+      <div class="icon" id="dock-itunes" title="iTunes">
+        <svg viewBox="0 0 128 128">
+          <defs>
+            <linearGradient id="i-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff9ed8"/><stop offset="100%" stop-color="#d63384"/></linearGradient>
+            <radialGradient id="i-gloss"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.7"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0.0"/></radialGradient>
+          </defs>
+          <circle cx="64" cy="64" r="60" fill="url(#i-bg)"/>
+          <ellipse cx="46" cy="86" rx="14" ry="10" fill="#ffffff"/>
+          <rect x="56" y="36" width="5" height="50" fill="#ffffff"/>
+          <path d="M56 36 Q78 40 78 54 Q78 66 61 60" fill="#ffffff"/>
+          <circle cx="64" cy="64" r="60" fill="url(#i-gloss)" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="icon" id="dock-calc" title="Калькулятор">
+        <svg viewBox="0 0 128 128">
+          <rect x="16" y="8" width="96" height="112" rx="16" fill="#2c3e50"/>
+          <rect x="24" y="16" width="80" height="28" rx="6" fill="#95a5a6" stroke="#1a252f" stroke-width="1"/>
+          <g fill="#ecf0f1">
+            <circle cx="36" cy="58" r="7"/><circle cx="64" cy="58" r="7"/><circle cx="92" cy="58" r="7"/>
+            <circle cx="36" cy="80" r="7"/><circle cx="64" cy="80" r="7"/><circle cx="92" cy="80" r="7"/>
+            <circle cx="36" cy="102" r="7"/><circle cx="64" cy="102" r="7"/>
+          </g>
+          <circle cx="92" cy="102" r="7" fill="#e67e22"/>
+          <rect x="16" y="8" width="96" height="56" rx="16" fill="#ffffff" opacity="0.05"/>
+        </svg>
+      </div>
+      <div class="icon" id="dock-textedit" title="TextEdit">
+        <svg viewBox="0 0 128 128">
+          <rect x="24" y="12" width="80" height="104" rx="6" fill="#ffffff" stroke="#bdc3c7" stroke-width="2"/>
+          <path d="M88 12 L104 12 L104 28 Z" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+          <g stroke="#3498db" stroke-width="2.5" stroke-linecap="round">
+            <line x1="36" y1="36" x2="92" y2="36"/><line x1="36" y1="52" x2="92" y2="52"/>
+            <line x1="36" y1="68" x2="76" y2="68"/><line x1="36" y1="84" x2="92" y2="84"/>
+          </g>
+          <polygon points="90,80 108,98 100,106 82,88" fill="#f39c12" stroke="#d68910" stroke-width="1.5"/>
+          <rect x="90" y="88" width="18" height="6" fill="#bdc3c7"/>
+          <polygon points="100,94 108,98 100,106" fill="#e74c3c"/>
+        </svg>
+      </div>
+      <div class="icon" id="dock-sys" title="Системные настройки">
+        <svg viewBox="0 0 128 128">
+          <defs>
+            <linearGradient id="g-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bdc3c7"/><stop offset="100%" stop-color="#7f8c8d"/></linearGradient>
+          </defs>
+          <g fill="url(#g-bg)">
+            <rect x="56" y="8" width="16" height="24" rx="3"/><rect x="56" y="96" width="16" height="24" rx="3"/>
+            <rect x="8" y="56" width="24" height="16" rx="3"/><rect x="96" y="56" width="24" height="16" rx="3"/>
+            <rect x="22" y="22" width="16" height="24" rx="3" transform="rotate(-45 30 34)"/>
+            <rect x="90" y="82" width="16" height="24" rx="3" transform="rotate(-45 98 94)"/>
+            <rect x="90" y="22" width="16" height="24" rx="3" transform="rotate(45 98 34)"/>
+            <rect x="22" y="82" width="16" height="24" rx="3" transform="rotate(45 30 94)"/>
+          </g>
+          <circle cx="64" cy="64" r="34" fill="url(#g-bg)"/>
+          <circle cx="64" cy="64" r="16" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/>
+          <circle cx="64" cy="64" r="34" fill="#ffffff" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="icon" id="dock-trash" title="Корзина">
+        <svg viewBox="0 0 128 128">
+          <defs>
+            <linearGradient id="t-bg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#bdc3c7"/><stop offset="20%" stop-color="#ecf0f1"/>
+              <stop offset="50%" stop-color="#bdc3c7"/><stop offset="80%" stop-color="#95a5a6"/><stop offset="100%" stop-color="#7f8c8d"/>
+            </linearGradient>
+          </defs>
+          <path d="M26 36 L36 110 L92 110 L102 36 Z" fill="url(#t-bg)" stroke="#7f8c8d" stroke-width="2"/>
+          <rect x="16" y="24" width="96" height="12" rx="3" fill="url(#t-bg)" stroke="#7f8c8d" stroke-width="2"/>
+          <rect x="48" y="14" width="32" height="10" rx="3" fill="#95a5a6" stroke="#7f8c8d" stroke-width="2"/>
+          <line x1="44" y1="46" x2="40" y2="100" stroke="#7f8c8d" stroke-width="2" opacity="0.5"/>
+          <line x1="64" y1="46" x2="64" y2="100" stroke="#7f8c8d" stroke-width="2" opacity="0.5"/>
+          <line x1="84" y1="46" x2="88" y2="100" stroke="#7f8c8d" stroke-width="2" opacity="0.5"/>
+          <rect x="26" y="36" width="76" height="74" fill="#ffffff" opacity="0.1"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="hint">Окно можно двигать за заголовок.</div>
+
+  <div id="wizard-overlay">
+    <div class="wizard-box">
+      <div class="wizard-titlebar"></div>
+      <div class="wizard-step active" data-step="0">
+        <div class="wizard-icon">🍏</div>
+        <h2>Добро пожаловать в Mac OS X</h2>
+        <p>Этот ассистент поможет настроить систему: ваше имя и оформление рабочего стола. Это займёт меньше минуты.</p>
+      </div>
+      <div class="wizard-step" data-step="1">
+        <div class="wizard-icon">👤</div>
+        <h2>Как вас зовут?</h2>
+        <p>Это имя будет использоваться как имя пользователя системы.</p>
+        <input type="text" class="wizard-input" id="wizard-name" placeholder="Например, Александр" maxlength="30">
+      </div>
+      <div class="wizard-step" data-step="2">
+        <div class="wizard-icon">🖼️</div>
+        <h2>Выберите обои рабочего стола</h2>
+        <p>Можно поменять позже в Системных настройках.</p>
+        <div class="wizard-wallpaper-grid" id="wizard-wallpaper-grid">
+          <div class="wallpaper-swatch selected" data-bg="radial-gradient(circle at 50% 30%, #6fb7e6 0%, #2f77b0 55%, #14497e 100%)" style="background:radial-gradient(circle at 50% 30%, #6fb7e6 0%, #2f77b0 55%, #14497e 100%);" title="Голубой"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #3a6bd6 0%, #1c3f8f 55%, #0b1f4e 100%)" style="background:radial-gradient(circle at 50% 30%, #3a6bd6 0%, #1c3f8f 55%, #0b1f4e 100%);" title="Тёмно-синий"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #b98fe6 0%, #6a3fae 55%, #341e63 100%)" style="background:radial-gradient(circle at 50% 30%, #b98fe6 0%, #6a3fae 55%, #341e63 100%);" title="Фиолетовый"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #d6a0e6 0%, #8e4fae 55%, #4a2263 100%)" style="background:radial-gradient(circle at 50% 30%, #d6a0e6 0%, #8e4fae 55%, #4a2263 100%);" title="Сиреневый"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #8ee6c6 0%, #2f9e7a 55%, #14503e 100%)" style="background:radial-gradient(circle at 50% 30%, #8ee6c6 0%, #2f9e7a 55%, #14503e 100%);" title="Мятный"></div>
+          <div class="wallpaper-swatch" data-bg="radial-gradient(circle at 50% 30%, #e6c98e 0%, #ae7a2f 55%, #5a3d14 100%)" style="background:radial-gradient(circle at 50% 30%, #e6c98e 0%, #ae7a2f 55%, #5a3d14 100%);" title="Песочный"></div>
+        </div>
+      </div>
+      <div class="wizard-step" data-step="3">
+        <div class="wizard-icon">✅</div>
+        <h2>Всё готово!</h2>
+        <p id="wizard-summary">Настройки будут сохранены на этом компьютере.</p>
+      </div>
+      <div class="wizard-nav">
+        <button class="wizard-btn" id="wizard-back">Назад</button>
+        <div class="wizard-dots">
+          <span class="wizard-dot active"></span><span class="wizard-dot"></span><span class="wizard-dot"></span><span class="wizard-dot"></span>
+        </div>
+        <button class="wizard-btn primary" id="wizard-next">Далее</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="spotlight-overlay">
+    <div class="spotlight-box">
+      <div class="spotlight-input-row">
+        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="10" r="6.5" fill="none" stroke="#888" stroke-width="2"/>
+          <line x1="15" y1="15" x2="20.5" y2="20.5" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="spotlight-input" placeholder="Spotlight — поиск">
+      </div>
+      <div class="spotlight-results" id="spotlight-results"></div>
+    </div>
+  </div>
+
+<script>
+  function tick(){
+    var d = new Date();
+    var h = d.getHours().toString().padStart(2,'0');
+    var m = d.getMinutes().toString().padStart(2,'0');
+    document.getElementById('clock').textContent = d.toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'short'}) + '  ' + h + ':' + m;
+  }
+  tick();
+  setInterval(tick, 15000);
+
+  function buildCalendar(){
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth();
+    var today = now.getDate();
+    var monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    document.getElementById('cal-month-label').textContent = monthNames[month] + ' ' + year;
+    var firstDay = new Date(year, month, 1);
+    var startOffset = (firstDay.getDay() + 6) % 7;
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var daysInPrevMonth = new Date(year, month, 0).getDate();
+    var html = '';
+    for(var i = startOffset; i > 0; i--){ html += '<span class="cal-day other-month">' + (daysInPrevMonth - i + 1) + '</span>'; }
+    for(var d = 1; d <= daysInMonth; d++){
+      var cls = (d === today) ? 'cal-day today' : 'cal-day';
+      html += '<span class="' + cls + '">' + d + '</span>';
+    }
+    var remainder = (startOffset + daysInMonth) % 7;
+    if(remainder !== 0){ for(var n = 1; n <= 7 - remainder; n++){ html += '<span class="cal-day other-month">' + n + '</span>'; } }
+    document.getElementById('cal-days').innerHTML = html;
+  }
+  buildCalendar();
+
+  var activeWindow = null;
+  var zTop = 10;
+
+  function setupWindow(winId, titlebarId, closeId, minId, zoomId, defaultRect){
+    var win = document.getElementById(winId);
+    var bar = document.getElementById(titlebarId);
+    var maximized = false;
+    var savedRect = null;
+    function focusWin(){ activeWindow = win; zTop++; win.style.zIndex = zTop; }
+    win.addEventListener('mousedown', focusWin);
+    document.getElementById(closeId).addEventListener('click', function(){ win.classList.add('closed'); win.style.display = 'none'; if(activeWindow === win) activeWindow = null; });
+    document.getElementById(minId).addEventListener('click', function(){ win.classList.add('minimized'); });
+    document.getElementById(zoomId).addEventListener('click', function(){
+      if(!maximized){ savedRect = {top:win.style.top, left:win.style.left, width:win.style.width}; win.style.top = '22px'; win.style.left = '0px'; win.style.width = '100%'; maximized = true; } 
+      else { win.style.top = savedRect.top || defaultRect.top; win.style.left = savedRect.left || defaultRect.left; win.style.width = savedRect.width || defaultRect.width; maximized = false; }
+    });
+    win.zoomToggle = function(){ document.getElementById(zoomId).click(); };
+    win.minimizeIt = function(){ document.getElementById(minId).click(); };
+    win.closeIt = function(){ document.getElementById(closeId).click(); };
+    var offX=0, offY=0, dragging=false;
+    bar.addEventListener('mousedown', function(e){ dragging = true; offX = e.clientX - win.offsetLeft; offY = e.clientY - win.offsetTop; });
+    document.addEventListener('mousemove', function(e){ if(!dragging) return; win.style.left = (e.clientX - offX) + 'px'; win.style.top  = (e.clientY - offY) + 'px'; });
+    document.addEventListener('mouseup', function(){ dragging = false; });
+    return win;
+  }
+
+  var winAbout = setupWindow('win','titlebar','btn-close','btn-min','btn-zoom', {top:'80px', left:'120px', width:'420px'});
+  var winSettings = setupWindow('win-settings','titlebar-settings', 'btn-close-settings','btn-min-settings','btn-zoom-settings', {top:'120px', left:'260px', width:'460px'});
+  var winSafari = setupWindow('win-safari','titlebar-safari', 'btn-close-safari','btn-min-safari','btn-zoom-safari', {top:'70px', left:'200px', width:'520px'});
+  var winMail = setupWindow('win-mail','titlebar-mail', 'btn-close-mail','btn-min-mail','btn-zoom-mail', {top:'100px', left:'180px', width:'480px'});
+  var winItunes = setupWindow('win-itunes','titlebar-itunes', 'btn-close-itunes','btn-min-itunes','btn-zoom-itunes', {top:'130px', left:'220px', width:'480px'});
+  var winTrash = setupWindow('win-trash','titlebar-trash', 'btn-close-trash','btn-min-trash','btn-zoom-trash', {top:'160px', left:'300px', width:'340px'});
+  var winCalc = setupWindow('win-calc','titlebar-calc', 'btn-close-calc','btn-min-calc','btn-zoom-calc', {top:'110px', left:'340px', width:'220px'});
+  var winTextEdit = setupWindow('win-textedit','titlebar-textedit', 'btn-close-textedit','btn-min-textedit','btn-zoom-textedit', {top:'90px', left:'280px', width:'460px'});
+
+  function openWindow(win){ win.classList.remove('minimized', 'closed'); win.style.display = 'block'; zTop++; win.style.zIndex = zTop; activeWindow = win; }
+  document.getElementById('dock-finder').addEventListener('click', function(){ openWindow(winAbout); });
+  document.getElementById('dock-sys').addEventListener('click', function(){ openWindow(winSettings); });
+  document.getElementById('dock-safari').addEventListener('click', function(){ openWindow(winSafari); });
+  document.getElementById('dock-mail').addEventListener('click', function(){ openWindow(winMail); });
+  document.getElementById('dock-itunes').addEventListener('click', function(){ openWindow(winItunes); });
+  document.getElementById('dock-calc').addEventListener('click', function(){ openWindow(winCalc); });
+  document.getElementById('dock-textedit').addEventListener('click', function(){ openWindow(winTextEdit); });
+  document.getElementById('dock-trash').addEventListener('click', function(){ openWindow(winTrash); });
+
+  var openWizard; 
+  (function(){
+    var COOKIE_NAME = 'macOs.nice.setupWizard';
+    function setCookie(name, value, days){
+      var expires = '';
+      if(days){ var date = new Date(); date.setTime(date.getTime() + days*24*60*60*1000); expires = '; expires=' + date.toUTCString(); }
+      document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/';
+    }
+    function getCookie(name){
+      var match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\/+^]/g,'\\$&') + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+    var overlay = document.getElementById('wizard-overlay');
+    var steps = Array.prototype.slice.call(document.querySelectorAll('.wizard-step'));
+    var dots = Array.prototype.slice.call(document.querySelectorAll('.wizard-dot'));
+    var nameInput = document.getElementById('wizard-name');
+    var wizardSwatches = document.querySelectorAll('#wizard-wallpaper-grid .wallpaper-swatch');
+    var backBtn = document.getElementById('wizard-back');
+    var nextBtn = document.getElementById('wizard-next');
+    var summary = document.getElementById('wizard-summary');
+    var currentStep = 0;
+    var chosenWallpaper = wizardSwatches.length ? wizardSwatches[0].getAttribute('data-bg') : null;
+    wizardSwatches.forEach(function(sw){
+      sw.addEventListener('click', function(){
+        wizardSwatches.forEach(function(s){ s.classList.remove('selected'); });
+        sw.classList.add('selected');
+        chosenWallpaper = sw.getAttribute('data-bg');
+      });
+    });
+    function showStep(i){
+      currentStep = i;
+      steps.forEach(function(s, idx){ s.classList.toggle('active', idx === i); });
+      dots.forEach(function(d, idx){ d.classList.toggle('active', idx === i); });
+      backBtn.style.visibility = (i === 0) ? 'hidden' : 'visible';
+      nextBtn.textContent = (i === steps.length - 1) ? 'Начать работу' : 'Далее';
+      if(i === steps.length - 1){
+        var nm = nameInput.value.trim() || 'Пользователь';
+        summary.textContent = 'Добро пожаловать, ' + nm + '! Настройки сохранены на этом компьютере.';
+      }
+    }
+    backBtn.addEventListener('click', function(){ if(currentStep > 0) showStep(currentStep - 1); });
+    nextBtn.addEventListener('click', function(){ if(currentStep < steps.length - 1){ showStep(currentStep + 1); } else { finishWizard(); } });
+    function applySettings(name, wallpaperBgValue){
+      if(name){ var el = document.getElementById('about-username'); if(el) el.textContent = 'Пользователь: ' + name; }
+      if(wallpaperBgValue){ document.body.style.backgroundImage = 'none'; document.body.style.background = wallpaperBgValue; }
+    }
+    function finishWizard(){
+      var name = nameInput.value.trim() || 'Пользователь';
+      var data = JSON.stringify({ name: name, wallpaper: chosenWallpaper });
+      setCookie(COOKIE_NAME, data, 365);
+      applySettings(name, chosenWallpaper);
+      overlay.classList.remove('active');
+    }
+    openWizard = function(){ currentStep = 0; showStep(0); overlay.classList.add('active'); };
+    var saved = getCookie(COOKIE_NAME);
+    if(saved){ try{ var parsed = JSON.parse(saved); applySettings(parsed.name, parsed.wallpaper); } catch(e){} } 
+    else { openWizard(); }
+  })();
+
+  // ---------- КАЛЬКУЛЯТОР (ПОЛНОСТЬЮ ПЕРЕПИСАН И ИСПРАВЛЕН) ----------
+  (function(){
+    var display = document.getElementById('calc-display');
+    if (!display) return;
+
+    var current = '0';
+    var previous = null;
+    var pendingOp = null;
+    var resetNext = false;
+
+    function updateDisplay(){
+      var text = current;
+      if (text.length > 9 && text !== 'Ошибка') {
+        text = Number(text).toExponential(4);
+      }
+      display.textContent = text;
+    }
+
+    function compute(a, b, op){
+      var num1 = parseFloat(a);
+      var num2 = parseFloat(b);
+      if (isNaN(num1) || isNaN(num2)) return b;
+      switch(op){
+        case 'add': return num1 + num2;
+        case 'subtract': return num1 - num2;
+        case 'multiply': return num1 * num2;
+        case 'divide': return num2 === 0 ? 'Ошибка' : num1 / num2;
+        default: return num2;
+      }
+    }
+
+    document.querySelectorAll('#win-calc [data-num]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var num = btn.getAttribute('data-num');
+        if (resetNext) {
+          current = '0';
+          resetNext = false;
+        }
+        if (num === '0' && current === '0') return;
+        if (current === '0') {
+          current = num;
+        } else {
+          current += num;
+        }
+        updateDisplay();
+      });
+    });
+
+    document.querySelectorAll('#win-calc [data-op]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var op = btn.getAttribute('data-op');
+        
+        if (op === 'clear') {
+          current = '0';
+          previous = null;
+          pendingOp = null;
+          resetNext = false;
+        } 
+        else if (op === 'negate') {
+          if (current !== '0' && current !== 'Ошибка') {
+            current = String(parseFloat(current) * -1);
+          }
+        } 
+        else if (op === 'percent') {
+          if (current !== 'Ошибка') {
+            current = String(parseFloat(current) / 100);
+          }
+        } 
+        else if (op === 'decimal') {
+          if (current !== 'Ошибка' && current.indexOf('.') === -1) {
+            current += '.';
+          }
+        } 
+        else if (op === 'equals') {
+          if (pendingOp !== null && previous !== null && current !== 'Ошибка') {
+            current = String(compute(previous, current, pendingOp));
+            previous = null;
+            pendingOp = null;
+            resetNext = true;
+          }
+        } 
+        else {
+          if (pendingOp !== null && previous !== null && !resetNext && current !== 'Ошибка') {
+            current = String(compute(previous, current, pendingOp));
+          }
+          previous = current;
+          pendingOp = op;
+          resetNext = true;
+        }
+        updateDisplay();
+      });
+    });
+  })();
+  // --------------------------------------------------------------------
+
+  var menuItems = document.querySelectorAll('.menu-item');
+  menuItems.forEach(function(mi){
+    mi.addEventListener('click', function(e){
+      var wasOpen = mi.classList.contains('open');
+      menuItems.forEach(function(m){ m.classList.remove('open'); });
+      if(!wasOpen){ mi.classList.add('open'); }
+      e.stopPropagation();
+    });
+  });
+  document.addEventListener('click', function(){ menuItems.forEach(function(m){ m.classList.remove('open'); }); });
+
+  var wallpaperBg = { blue: 'radial-gradient(circle at 50% 30%, #6fb7e6 0%, #2f77b0 55%, #14497e 100%)', purple: 'radial-gradient(circle at 50% 30%, #b98fe6 0%, #6a3fae 55%, #341e63 100%)' };
+  function setWallpaper(bg){ document.body.style.backgroundImage = 'none'; document.body.style.background = bg; }
+  function showPowerOverlay(text, reload){
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:99999;opacity:0;transition:opacity .8s ease;';
+    overlay.textContent = text;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function(){ overlay.style.opacity = '1'; });
+    if(reload){ setTimeout(function(){ location.reload(); }, 1200); }
+  }
+  document.querySelectorAll('.d-item[data-action]').forEach(function(item){
+    item.addEventListener('click', function(){
+      var action = item.getAttribute('data-action');
+      switch(action){
+        case 'open-about': openWindow(winAbout); break;
+        case 'open-settings': openWindow(winSettings); break;
+        case 'open-trash': openWindow(winTrash); break;
+        case 'empty-trash': openWindow(winTrash); break;
+        case 'wallpaper-blue': setWallpaper(wallpaperBg.blue); break;
+        case 'wallpaper-purple': setWallpaper(wallpaperBg.purple); break;
+        case 'close-active': if(activeWindow) activeWindow.closeIt(); break;
+        case 'minimize-active': if(activeWindow) activeWindow.minimizeIt(); break;
+        case 'zoom-active': if(activeWindow) activeWindow.zoomToggle(); break;
+        case 'restart': showPowerOverlay('Перезагрузка…', true); break;
+        case 'shutdown': showPowerOverlay('Выключение…', false); break;
+        case 'open-wizard': openWizard(); break;
+      }
+    });
+  });
+
+  var mailData = [
+    {title:'Добро пожаловать в Leopard', from:'Apple', body:'Это демонстрационное письмо в имитации Mail. Никакой реальной почты здесь не отправляется и не принимается.'},
+    {title:'Новинки этой недели', from:'iTunes Store', body:'Подборка новых треков и альбомов недели — демонстрационный текст.'},
+    {title:'Ваша учётная запись готова', from:'.Mac', body:'Учётная запись .Mac настроена и готова к использованию (демо).'},
+    {title:'Обновление доступно', from:'Системное сообщение', body:'Доступно обновление системы. Это демонстрационное уведомление.'}
+  ];
+  var mailItems = document.querySelectorAll('.mail-item');
+  var mailPreview = document.querySelector('.mail-preview');
+  mailItems.forEach(function(item, i){
+    item.addEventListener('click', function(){
+      var d = mailData[i];
+      mailPreview.innerHTML = '<h4>' + d.title + '</h4><div class="meta">От: ' + d.from + ' · Сегодня</div><p>' + d.body + '</p>';
+    });
+  });
+
+  var trackRows = document.querySelectorAll('.track-row');
+  var itunesPlayer = document.querySelector('.itunes-player');
+  trackRows.forEach(function(row){
+    row.addEventListener('click', function(){
+      var name = row.querySelector('span').textContent.replace(/^\d+\.\s*/, '');
+      itunesPlayer.innerHTML = '⏮ ⏯ ⏭ &nbsp;—&nbsp; Сейчас играет: ' + name;
+    });
+  });
+
+  var settingsMain = document.getElementById('settings-main');
+  var panelDesktop = document.getElementById('panel-desktop');
+  document.getElementById('pref-tile-desktop').addEventListener('click', function(){ settingsMain.classList.remove('active'); panelDesktop.classList.add('active'); });
+  document.getElementById('back-to-settings').addEventListener('click', function(){ panelDesktop.classList.remove('active'); settingsMain.classList.add('active'); });
+
+  var swatches = document.querySelectorAll('.wallpaper-swatch');
+  swatches.forEach(function(sw){
+    sw.addEventListener('click', function(){
+      swatches.forEach(function(s){ s.classList.remove('selected'); });
+      sw.classList.add('selected');
+      document.body.style.backgroundImage = 'none';
+      document.body.style.background = sw.getAttribute('data-bg');
+    });
+  });
+
+  document.getElementById('wallpaper-upload').addEventListener('change', function(e){
+    var file = e.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      swatches.forEach(function(s){ s.classList.remove('selected'); });
+      document.body.style.background = 'none';
+      document.body.style.backgroundImage = 'url(' + ev.target.result + ')';
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  (function(){
+    var area = document.getElementById('textedit-area');
+    var placeholderText = 'Начните печатать здесь…';
+    var isPlaceholder = true;
+    area.addEventListener('focus', function(){ if(isPlaceholder){ area.textContent = ''; isPlaceholder = false; } });
+    area.addEventListener('blur', function(){ if(area.textContent.trim() === ''){ area.textContent = placeholderText; isPlaceholder = true; } });
+    function toggleFormat(cmd, btn){ document.execCommand(cmd, false, null); btn.classList.toggle('active', document.queryCommandState(cmd)); area.focus(); }
+    document.getElementById('te-bold').addEventListener('click', function(){ toggleFormat('bold', this); });
+    document.getElementById('te-italic').addEventListener('click', function(){ toggleFormat('italic', this); });
+    document.getElementById('te-underline').addEventListener('click', function(){ toggleFormat('underline', this); });
+    document.getElementById('te-clear').addEventListener('click', function(){ area.innerHTML = ''; isPlaceholder = false; area.focus(); });
+  })();
+
+  (function(){
+    var overlay = document.getElementById('spotlight-overlay');
+    var input = document.getElementById('spotlight-input');
+    var results = document.getElementById('spotlight-results');
+    var btn = document.getElementById('menu-spotlight');
+    function openSpotlight(){ overlay.classList.add('active'); input.value = ''; results.innerHTML = ''; setTimeout(function(){ input.focus(); }, 10); }
+    function closeSpotlight(){ overlay.classList.remove('active'); }
+    btn.addEventListener('click', function(e){ openSpotlight(); e.stopPropagation(); });
+    document.addEventListener('keydown', function(e){
+      if((e.ctrlKey || e.metaKey) && e.code === 'Space'){ e.preventDefault(); if(overlay.classList.contains('active')){ closeSpotlight(); } else { openSpotlight(); } }
+      if(e.key === 'Escape' && overlay.classList.contains('active')){ closeSpotlight(); }
+    });
+    overlay.addEventListener('click', function(e){ if(e.target === overlay) closeSpotlight(); });
+    function tryCalculate(expr){
+      var cleaned = expr.trim().replace(/=+\s*$/, '').trim();
+      if(cleaned === '') return null;
+      if(!/^[0-9+\-*/().,\s]+$/.test(cleaned)) return null;
+      if(!/[0-9]/.test(cleaned)) return null;
+      var normalized = cleaned.replace(/,/g, '.');
+      try{
+        var value = Function('"use strict"; return (' + normalized + ')')();
+        if(typeof value === 'number' && isFinite(value)){ return Math.round(value * 1e10) / 1e10; }
+      } catch(e){}
+      return null;
+    }
+    function render(query){
+      results.innerHTML = '';
+      if(query.trim() === '') return;
+      var calcResult = tryCalculate(query);
+      if(calcResult !== null){
+        var row = document.createElement('div');
+        row.className = 'spotlight-result highlighted';
+        row.innerHTML = '<span class="spotlight-answer">= ' + calcResult + '</span><span class="sr-label">Калькулятор</span>';
+        row.addEventListener('click', function(){ if(navigator.clipboard){ navigator.clipboard.writeText(String(calcResult)).catch(function(){}); } closeSpotlight(); });
+        results.appendChild(row);
+      }
+      var googleRow = document.createElement('div');
+      googleRow.className = 'spotlight-result' + (calcResult === null ? ' highlighted' : '');
+      googleRow.innerHTML = '<span>Искать «' + query + '» в Google</span><span class="sr-label">Поиск в интернете</span>';
+      googleRow.addEventListener('click', function(){ window.open('https://www.google.com/search?q=' + encodeURIComponent(query), '_blank'); closeSpotlight(); });
+      results.appendChild(googleRow);
+    }
+    input.addEventListener('input', function(){ render(input.value); });
+    input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ var first = results.querySelector('.spotlight-result.highlighted') || results.querySelector('.spotlight-result'); if(first) first.click(); } });
+  })();
+</script>
+</body>
+</html>
