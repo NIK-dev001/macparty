@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Kernel Panic</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000000;
+    color: #ffffff;
+    font-family: "Menlo", "Monaco", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow: hidden;
+    cursor: none;
+    user-select: none;
+    padding: 20px;
+  }
+  #console { white-space: pre-wrap; word-wrap: break-word; max-width: 900px; margin: 0 auto; }
+  .cursor {
+    display: inline-block; width: 8px; height: 15px; background: #ffffff;
+    animation: blink 0.8s infinite; vertical-align: middle;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  #start-screen {
+    position: fixed; inset: 0; background: #000; color: #fff;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    z-index: 100; cursor: pointer; font-family: -apple-system, "Segoe UI", sans-serif;
+  }
+  #start-screen h1 { font-size: 24px; font-weight: 300; margin-bottom: 10px; }
+  #start-screen p { font-size: 14px; color: #888; }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+  <h1>Симулятор Kernel Panic</h1>
+  <p>Нажмите в любом месте экрана для запуска...</p>
+</div>
+
+<div id="console"></div>
+
+<script>
+  const consoleDiv = document.getElementById('console');
+  const startScreen = document.getElementById('start-screen');
+  let isRunning = false;
+
+  const panicLines = [
+    "Anonymous UUID:       8F3B2A1C-4D5E-6F7A-8B9C-0D1E2F3A4B5C",
+    "",
+    new Date().toString(),
+    "",
+    "*** Panic Report ***",
+    "panic(cpu 0 caller 0xffffff800a1b2c3d): \"NVRAM[EFICON]: Error reading variable\"",
+    "Debugger message: panic",
+    "Memory ID: 0x0000000000000000",
+    "OS version: 23F79",
+    "Kernel version: Darwin Kernel Version 23.5.0: Wed Apr 10 20:53:21 PDT 2024; root:xnu-10063.121.3~5/RELEASE_ARM64_T8112",
+    "System model name: MacBookPro18,3 (Mac-xxxxxxxxxxxxxxxx)",
+    "System shutdown begun: NO",
+    "Panic diags file unavailable: NO",
+    "",
+    "Backtrace (CPU 0), Frame : Return Address",
+    "0xffffff8000000000 : 0xffffff800a1b2c3d",
+    "0xffffff8000000010 : 0xffffff800a1c4e5f",
+    "0xffffff8000000020 : 0xffffff800a1d6g7h",
+    "0xffffff8000000030 : 0xffffff800a1e8i9j",
+    "0xffffff8000000040 : 0xffffff800a1fakbl",
+    "",
+    "Kernel Extensions in backtrace:",
+    "   com.apple.driver.AppleIntelCPUPowerManagement(220.0.0)",
+    "   com.apple.iokit.IOACPIFamily(1.4)",
+    "   com.apple.driver.AppleUSBXHCI(1.2)",
+    "",
+    "System uptime in nanoseconds: 145938274659102",
+    "Last loaded kext at 145938274659102: com.apple.driver.AppleUSBXHCI 1.2",
+    "Last unloaded kext at 145938274659101: com.apple.driver.AppleUSBXHCI 1.2",
+    "",
+    "Model: MacBookPro18,3, BootROM 10151.121.3",
+    "6 processors, 6 cores, 2.6 GHz, 16 GB",
+    "Graphics: Apple M1 Pro, Built-In",
+    "Memory Module: LPDDR5",
+    "AirPort: spairport_wireless_card_type_airport_extreme (0x14E4, 0x7BF), wl0",
+    "Bluetooth: Version 10.0.11f4, 3 services, 27 devices",
+    "Network Service: Wi-Fi, AirPort, en0",
+    "Serial ATA Device: APPLE SSD SM0512L, 500.28 GB",
+    "USB Device: USB 3.1 Bus",
+    "Thunderbolt Bus: MacBook Pro, Apple Inc., 47.4",
+    "",
+    "System will restart automatically in 15 seconds...",
+    "Press 'ESC' or 'Q' to exit simulation."
+  ];
+
+  function playBeep() {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.value = 600;
+      oscillator.type = 'square';
+      gainNode.gain.value = 0.05;
+      oscillator.start();
+      setTimeout(() => oscillator.stop(), 150);
+    } catch(e) {}
+  }
+
+  function typeLine(line, index) {
+    if (index >= panicLines.length) {
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      consoleDiv.appendChild(cursor);
+      setTimeout(() => {
+        if (confirm('Система будет перезагружена. Выйти из симуляции?')) location.reload();
+      }, 15000);
+      return;
+    }
+
+    const lineDiv = document.createElement('div');
+    lineDiv.textContent = line;
+    consoleDiv.appendChild(lineDiv);
+    window.scrollTo(0, document.body.scrollHeight);
+
+    let delay = Math.random() * 300 + 100; // Обычная задержка 100-400мс
+    
+    if (line === '') {
+      delay = Math.random() * 600 + 400; // Пауза между секциями 400-1000мс
+    }
+    if (line.includes('*** Panic Report ***') || line.includes('Backtrace') || line.includes('Kernel Extensions') || line.includes('System uptime')) {
+      delay = Math.random() * 1000 + 800; // Долгая пауза после заголовков 800-1800мс
+    }
+    if (Math.random() < 0.05) {
+      delay = Math.random() * 2000 + 2000; // Случайное "зависание" на 2-4 секунды
+    }
+
+    setTimeout(() => typeLine(panicLines[index + 1], index + 1), delay);
+  }
+
+  function startSimulation() {
+    if (isRunning) return;
+    isRunning = true;
+    startScreen.style.display = 'none';
+    document.documentElement.requestFullscreen().catch(() => {});
+    playBeep();
+    typeLine(panicLines[0], 0);
+  }
+
+  startScreen.addEventListener('click', startSimulation);
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'Escape' || e.key === 'q' || e.key === 'Q' || e.key === 'й' || e.key === 'Й') && isRunning) {
+      if (confirm('Выйти из симуляции Kernel Panic?')) location.reload();
+    }
+  });
+</script>
+</body>
+</html>

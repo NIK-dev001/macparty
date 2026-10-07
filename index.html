@@ -9,19 +9,14 @@
   html, body {
     font-family: -apple-system, "Lucida Grande", "Segoe UI", sans-serif;
     background: radial-gradient(circle at 50% 20%, #1e3a5f 0%, #0a1929 70%, #000 100%);
-    color: #fff;
-    min-height: 100vh;
+    color: #fff; min-height: 100vh;
   }
   body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: 
-      radial-gradient(circle at 20% 30%, rgba(100, 180, 255, 0.15) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(180, 100, 255, 0.1) 0%, transparent 40%);
-    pointer-events: none;
-    z-index: 0;
+    content: ''; position: fixed; inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(100, 180, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(180, 100, 255, 0.1) 0%, transparent 40%);
+    pointer-events: none; z-index: 0;
   }
-
   header { position: relative; z-index: 2; padding: 50px 20px 30px; text-align: center; }
   .logo {
     font-size: 56px; font-weight: 800;
@@ -30,22 +25,12 @@
     letter-spacing: -2px; margin-bottom: 12px;
   }
   .tagline { font-size: 18px; color: rgba(255,255,255,0.7); font-weight: 300; max-width: 500px; margin: 0 auto; }
-
-  /* БОЛЬШАЯ КНОПКА GITHUB */
   .github-btn-big {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 30px;
-    padding: 18px 40px;
-    font-size: 18px;
-    font-weight: 700;
-    color: #fff;
+    display: inline-flex; align-items: center; gap: 14px; margin-top: 30px;
+    padding: 18px 40px; font-size: 18px; font-weight: 700; color: #fff;
     background: linear-gradient(135deg, #24292e 0%, #000 100%);
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 16px;
-    text-decoration: none;
-    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.2); border-radius: 16px;
+    text-decoration: none; cursor: pointer;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
     transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   }
@@ -54,14 +39,8 @@
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.2);
     border-color: #7dd3ff;
   }
-  .github-btn-big svg {
-    width: 28px;
-    height: 28px;
-    fill: #fff;
-  }
-
+  .github-btn-big svg { width: 28px; height: 28px; fill: #fff; }
   .container { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
-
   .hero-card {
     background: rgba(255,255,255,0.06); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.15); border-radius: 24px; padding: 40px; margin-bottom: 50px;
@@ -77,13 +56,12 @@
     transition: transform 0.2s;
   }
   .btn-primary:hover { transform: translateY(-2px); }
-
   .section-title { font-size: 28px; margin-bottom: 24px; text-align: center; }
   .section-title span {
     background: linear-gradient(135deg, #7dd3ff, #b48cff);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
   .project-card {
     background: rgba(255,255,255,0.06); backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 24px;
@@ -98,7 +76,6 @@
     background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
     text-decoration: none;
   }
-
   footer { position: relative; z-index: 2; max-width: 600px; margin: 40px auto 0; padding: 40px 20px; text-align: center; }
   footer h3 { font-size: 22px; margin-bottom: 8px; }
   footer p { color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 20px; }
@@ -116,8 +93,6 @@
   <header>
     <div class="logo">🍎 MacParty</div>
     <p class="tagline">Мои проекты в стиле macOS. Вайбкодинг, эмуляторы и эксперименты.</p>
-    
-    <!-- ТВОЯ КНОПКА GITHUB УЖЕ ВСТАВЛЕНА СЮДА -->
     <a href="https://github.com/NIK-dev001" target="_blank" class="github-btn-big">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 016 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
@@ -156,7 +131,8 @@
 
 <script>
   const projects = [
-    { title: 'Mac OS X Leopard', desc: 'HTML-эмулятор легендарной системы 2007 года', emoji: '💻', link: 'macos.html' },
+    { title: 'Mac OS X Leopard', desc: 'HTML-эмулятор легендарной системы 2007 года прямо в браузере.', emoji: '💻', link: 'macos.html' },
+    { title: 'Kernel Panic (macOS)', desc: 'Реалистичный симулятор паники ядра с постепенным выводом системного лога.', emoji: '💀', link: 'kernel-panic.html' },
     { title: 'Скоро...', desc: 'Новые проекты уже в разработке', emoji: '🚀', link: '' }
   ];
 
