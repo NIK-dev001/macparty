@@ -14,8 +14,6 @@
     --accent-blue: #0071e3;
     --accent-blue-hover: #0077ed;
     --github-bg: #21262d;
-    --github-border: #30363d;
-    --github-hover: #30363d;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,21 +28,19 @@
 
   .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
-  /* --- Header --- */
   header { padding: 64px 0 48px; text-align: center; border-bottom: 1px solid var(--border-color); }
-  .logo { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 12px; color: var(--text-primary); }
+  .logo { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 12px; }
   .tagline { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
 
   .github-btn {
     display: inline-flex; align-items: center; gap: 10px; padding: 10px 20px;
     font-size: 15px; font-weight: 500; color: var(--text-primary);
-    background-color: var(--github-bg); border: 1px solid var(--github-border);
-    border-radius: 8px; text-decoration: none; transition: background-color 0.2s, border-color 0.2s;
+    background-color: var(--github-bg); border: 1px solid var(--border-color);
+    border-radius: 8px; text-decoration: none; transition: all 0.2s;
   }
-  .github-btn:hover { background-color: var(--github-hover); border-color: var(--text-secondary); }
+  .github-btn:hover { border-color: var(--text-secondary); }
   .github-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
-  /* --- Main Content --- */
   main { padding: 48px 0; }
 
   .hero-section {
@@ -62,13 +58,12 @@
   }
   .btn-primary:hover { background-color: var(--accent-blue-hover); }
 
-  /* --- Projects Grid --- */
   .section-header { font-size: 20px; font-weight: 600; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
   .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
 
   .project-card {
     background-color: var(--bg-secondary); border: 1px solid var(--border-color);
-    border-radius: 12px; padding: 24px; transition: border-color 0.2s, transform 0.2s;
+    border-radius: 12px; padding: 24px; transition: all 0.2s;
     display: flex; flex-direction: column;
   }
   .project-card:hover { border-color: var(--text-secondary); transform: translateY(-2px); }
@@ -77,18 +72,38 @@
   .project-emoji { font-size: 24px; }
   .project-title { font-size: 16px; font-weight: 600; color: var(--accent-blue); text-decoration: none; }
   .project-title:hover { text-decoration: underline; }
-  .project-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; flex-grow: 1; margin-bottom: 16px; }
+  .project-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; flex-grow: 1; margin-bottom: 20px; }
   
-  .project-meta { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+  .project-meta { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
   .project-meta::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #238636; }
 
-  /* --- Footer & Contact --- */
+  .project-actions { display: flex; gap: 10px; }
+  
+  .project-link {
+    flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 500;
+    text-align: center; border-radius: 8px; text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .project-link.about {
+    background-color: var(--accent-blue); color: #fff;
+  }
+  .project-link.about:hover { background-color: var(--accent-blue-hover); }
+
+  .project-link.open {
+    background-color: transparent; color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+  }
+  .project-link.open:hover {
+    background-color: var(--bg-primary); color: var(--text-primary);
+    border-color: var(--text-secondary);
+  }
+
   footer { border-top: 1px solid var(--border-color); padding: 48px 0; margin-top: 48px; text-align: center; }
   .contact-box { max-width: 500px; margin: 0 auto; text-align: left; }
   .contact-box h3 { font-size: 18px; margin-bottom: 8px; }
   .contact-box p { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
   .form-group { margin-bottom: 16px; }
-
   .form-input, .form-textarea {
     width: 100%; padding: 10px 12px; font-size: 14px; color: var(--text-primary);
     background-color: var(--bg-primary); border: 1px solid var(--border-color);
@@ -96,7 +111,6 @@
   }
   .form-input:focus, .form-textarea:focus { border-color: var(--accent-blue); }
   .form-textarea { min-height: 100px; resize: vertical; }
-
   .copyright { margin-top: 48px; font-size: 13px; color: var(--text-secondary); }
 </style>
 </head>
@@ -132,19 +146,12 @@
         <h3>Связаться со мной</h3>
         <p>Есть идея, вопрос или просто хочешь поболтать о технике? Пиши.</p>
         <form class="contact-form" id="contact-form">
-          <div class="form-group">
-            <input type="text" class="form-input" id="c-name" placeholder="Ваше имя" required>
-          </div>
-          <div class="form-group">
-            <input type="email" class="form-input" id="c-email" placeholder="Ваша почта" required>
-          </div>
-          <div class="form-group">
-            <textarea class="form-textarea" id="c-msg" placeholder="Сообщение..." required></textarea>
-          </div>
+          <div class="form-group"><input type="text" class="form-input" id="c-name" placeholder="Ваше имя" required></div>
+          <div class="form-group"><input type="email" class="form-input" id="c-email" placeholder="Ваша почта" required></div>
+          <div class="form-group"><textarea class="form-textarea" id="c-msg" placeholder="Сообщение..." required></textarea></div>
           <button type="submit" class="btn-primary" style="width: 100%;">Отправить сообщение</button>
         </form>
       </div>
-      
       <div class="copyright">© 2026 MacParty.</div>
     </div>
   </footer>
@@ -154,20 +161,23 @@
     { 
       title: 'Mac OS X Leopard', 
       desc: 'HTML-эмулятор легендарной системы 2007 года.', 
-      emoji: '💻', 
-      link: 'macos.html' 
+      emoji: '', 
+      aboutLink: 'about-macos.html',
+      openLink: 'macos.html'
     },
     { 
       title: 'Kernel Panic (macOS)', 
       desc: 'Реалистичный симулятор паники ядра с постепенным выводом системного лога.', 
       emoji: '💀', 
-      link: 'kernel-panic.html' 
+      aboutLink: 'about-kernel.html',
+      openLink: 'kernel-panic.html'
     },
     { 
       title: 'В разработке', 
       desc: 'Новые проекты скоро.', 
       emoji: '⚙️', 
-      link: '' 
+      aboutLink: '',
+      openLink: ''
     }
   ];
 
@@ -176,17 +186,23 @@
     const card = document.createElement('div');
     card.className = 'project-card';
     
-    const titleHtml = p.link 
-      ? `<a href="${p.link}" class="project-title" target="_blank">${p.title} ↗</a>` 
-      : `<span class="project-title" style="color: var(--text-primary); cursor: default;">${p.title}</span>`;
+    const actionsHtml = p.aboutLink 
+      ? `<div class="project-actions">
+           <a href="${p.aboutLink}" class="project-link about">О проекте</a>
+           <a href="${p.openLink}" class="project-link open" target="_blank">Открыть ↗</a>
+         </div>`
+      : `<div class="project-actions">
+           <span class="project-link" style="color: var(--text-secondary); cursor: default;">Скоро</span>
+         </div>`;
 
     card.innerHTML = `
       <div class="project-header">
         <span class="project-emoji">${p.emoji}</span>
-        ${titleHtml}
+        <span class="project-title">${p.title}</span>
       </div>
       <div class="project-desc">${p.desc}</div>
       <div class="project-meta">HTML / CSS / JS</div>
+      ${actionsHtml}
     `;
     grid.appendChild(card);
   });
@@ -197,10 +213,8 @@
     const name = document.getElementById('c-name').value.trim();
     const email = document.getElementById('c-email').value.trim();
     const msg = document.getElementById('c-msg').value.trim();
-    
     const subject = encodeURIComponent('[MacParty] Сообщение от ' + name);
     const body = encodeURIComponent('Имя: ' + name + '\nПочта: ' + email + '\n\nСообщение:\n' + msg);
-    
     window.location.href = 'mailto:' + MY_EMAIL + '?subject=' + subject + '&body=' + body;
   });
 </script>
