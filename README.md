@@ -1,5 +1,12 @@
 # 🎉 MacParty
+---
 
+<div align="center">
+
+[![EU](https://img.shields.io/badge/🇪🇺-English-007aff?style=for-the-badge)](README.md)
+[![RU](https://img.shields.io/badge/🇷🇺-Русский-0051d5?style=for-the-badge)](README.ru.md)
+
+</div>
 **MacParty** is a collection of web-based macOS emulators and simulators built entirely with vanilla HTML, CSS, and JavaScript. Experience the nostalgia of classic Mac OS environments and system behaviors right in your modern web browser.
 
 🌐 **Live Demo**: [https://nik-dev001.github.io/macparty/](https://nik-dev001.github.io/macparty/)
